@@ -1,0 +1,123 @@
+/* Overall Page Container */
+.hotel-list-container {
+    font-family: 'Poppins', sans-serif;
+    padding: 20px;
+    background: linear-gradient(to right, #f8f9fa, #e3f2fd);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
+
+/* Back Button */
+.back-to-dashboard {
+    display: block;
+    margin: 20px auto;
+    font-weight: bold;
+   
+}
+
+/* Page Title */
+.hotel-page-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* Accordion Style */
+.hotel-area-accordion {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s;
+    width:1200px;
+   
+}
+
+.hotel-area-accordion:hover {
+    transform: scale(1.02);
+}
+
+.hotel-area-accordion .MuiAccordionSummary-root {
+    padding: 16px; /* Increase padding for a larger clickable area */
+    font-size: 1.1rem; /* Increase font size */
+    min-height: 56px; /* Adjust height */
+    width:1200px;
+   
+}
+
+.hotel-area-accordion .MuiAccordionSummary-expandIcon {
+    font-size: 2rem; /* Increase icon size */
+}
+
+.hotel-area-accordion .MuiAccordionSummary-content {
+    justify-content: center;
+}
+
+/* Area Icon */
+.area-icon {
+    margin-right: 10px;
+    color: #ff7043;
+}
+
+/* View Hotels Button */
+.view-hotels-btn {
+    margin-top: 10px;
+    background: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+/* Hotels Wrapper */
+.hotels-wrapper {
+    margin-top: 20px;
+}
+
+/* Hotel Section Title */
+.hotel-section-title {
+    font-size: 1.5rem;
+    color: #00796b;
+    margin-bottom: 10px;
+}
+
+/* Hotel Card */
+.hotel-card {
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    transition: 0.3s ease-in-out;
+    background: #ffffff;
+}
+
+.hotel-card:hover {
+    transform: scale(1.03);
+}
+
+/* Hotel Name */
+.hotel-name {
+    font-weight: bold;
+    color: #34495e;
+}
+
+/* Hotel Thumbnail */
+.hotel-thumbnail {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Hotel Actions */
+.hotel-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+/* Action Buttons */
+.hotel-action-btn {
+    font-size: 0.9rem;
+    width: 48%;
+    font-weight: bold;
+}

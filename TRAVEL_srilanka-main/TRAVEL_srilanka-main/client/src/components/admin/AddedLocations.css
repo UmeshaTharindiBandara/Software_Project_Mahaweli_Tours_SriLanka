@@ -1,0 +1,63 @@
+.added-container {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #f4f6f9;
+  }
+  
+  .back-button {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-bottom: 20px;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #3f51b5;
+    margin-bottom: 20px;
+  }
+  
+  .area-accordion {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .locations-container {
+    margin-bottom: 20px;
+  }
+  
+  .locations {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+  }
+  
+  .location-item {
+    text-align: center;
+  }
+  
+  .location-name {
+    font-weight: bold;
+    color: #3f51b5;
+  }
+  
+  .location-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .area-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .area-action-button {
+    width: 48%;
+    font-size: 0.9rem;
+  }
+  
