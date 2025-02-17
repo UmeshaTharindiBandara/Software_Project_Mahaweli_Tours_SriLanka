@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, FormControl, Select, InputLabel, MenuItem, TextField, Checkbox, FormGroup, FormControlLabel, Typography, Card, CardContent, Divider } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUtensils, faHiking } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 import './CustomizeTour.css';
 import PackageDetails from './PackageDetails.js';
 
@@ -13,8 +14,10 @@ const CustomizeTour = ({ tour = {} }) => {
     transport: '',
     mealPlan: '',
     activities: [],
-    
+    specialRequests: '',
   });
+
+  const navigate = useNavigate();
 
   const handleOptionChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,8 +56,10 @@ const CustomizeTour = ({ tour = {} }) => {
   };
 
   const handleConfirm = () => {
-    console.log("Selected options: ", selectedOptions);
-    alert('Customization Confirmed!');
+    // Store selected options in localStorage
+    localStorage.setItem('customizedPackage', JSON.stringify(selectedOptions));
+    // Navigate to the ViewCustomizedPackage page
+    navigate('/view-customized-package');
   };
 
   return (
@@ -63,9 +68,8 @@ const CustomizeTour = ({ tour = {} }) => {
         Customize Your Tour Package: {tour.name}
       </Typography>
 
-      <PackageDetails/>
+      <PackageDetails />
 
-      {/* Meal Plan Section */}
       <Card variant="outlined" className="customization-card">
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -84,7 +88,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </CardContent>
       </Card>
 
-      {/* Activity Options Section */}
       <Card variant="outlined" className="customization-card">
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -106,7 +109,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </CardContent>
       </Card>
 
-      {/* Destination Options */}
       <FormControl fullWidth margin="normal">
         <InputLabel>Optional Destinations</InputLabel>
         <Select
@@ -124,7 +126,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </Select>
       </FormControl>
 
-      {/* Transport Options */}
       <FormControl fullWidth margin="normal">
         <InputLabel>Transportation Mode</InputLabel>
         <Select
@@ -140,7 +141,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </Select>
       </FormControl>
 
-      {/* Hotel Selection */}
       <FormControl fullWidth margin="normal">
         <InputLabel>Hotel Selection</InputLabel>
         <Select
@@ -156,7 +156,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </Select>
       </FormControl>
 
-      {/* Guide Selection */}
       <FormControl fullWidth margin="normal">
         <InputLabel>Guide Selection</InputLabel>
         <Select
@@ -172,7 +171,6 @@ const CustomizeTour = ({ tour = {} }) => {
         </Select>
       </FormControl>
 
-      {/* Special Requests */}
       <TextField
         name="specialRequests"
         label="Special Requests"
@@ -182,7 +180,6 @@ const CustomizeTour = ({ tour = {} }) => {
         margin="normal"
       />
 
-      {/* Confirm Button */}
       <Button
         variant="contained"
         color="primary"

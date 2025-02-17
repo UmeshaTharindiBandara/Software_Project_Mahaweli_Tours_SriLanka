@@ -27,6 +27,8 @@ import SelectedPackage from './components/TourPackage/SelectedPackage';
 
 import Signup from "./components/registration/Signup";
 import Login from "./components/registration/Login";
+import ViewCustomizedPackage from "./components/TourPackage/ViewCustomizedPackage";
+
 
 function App() {
   return (
@@ -57,6 +59,8 @@ function App() {
 
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/view-customized-package" element={<ViewCustomizedPackage />} />
+        
 
         </Routes>
         <Footer/>
