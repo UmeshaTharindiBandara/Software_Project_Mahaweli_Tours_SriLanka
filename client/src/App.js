@@ -31,15 +31,13 @@ import Login from "./components/registration/Login";
 const AppContent = () => {
   const location = useLocation();
 
-  // Hide Header and Footer for these routes
-  const hideHeaderFooterRoutes = [
-    "/view-customized-package",
-    location.pathname.startsWith("/tour/") // Hides for any /tour/:id
-  ];
+  // Pages where the Header should be hidden
+  const hideHeaderPages = ["/view-customized-package"];
+  const isTourPage = location.pathname.startsWith("/tour/");
 
   return (
     <>
-      {!hideHeaderFooterRoutes.includes(true) && <Header />}
+      {!hideHeaderPages.includes(location.pathname) && !isTourPage && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -66,7 +64,7 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/view-customized-package" element={<ViewCustomizedPackage />} />
       </Routes>
-      {!hideHeaderFooterRoutes.includes(true) && <Footer />}
+      <Footer />
     </>
   );
 };

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 const ViewCustomizedPackage = () => {
   const [customizedPackage, setCustomizedPackage] = useState(null);
   const [packageDetails, setPackageDetails] = useState(null);
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [budgetDetails, setBudgetDetails] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +18,7 @@ const ViewCustomizedPackage = () => {
     // Simulating fetching package details (Ideally, fetch from API)
     const fetchedPackageDetails = {
       name: "Galle Fort",
-      budget: "$150",
+      baseBudget: 150, // base budget for the package
       duration: "1 Day",
       highlights: ["Dutch Reformed Church", "Lighthouse", "Fort Walls"],
     };
@@ -24,9 +26,101 @@ const ViewCustomizedPackage = () => {
     setPackageDetails(fetchedPackageDetails);
   }, []);
 
+  useEffect(() => {
+    if (customizedPackage && packageDetails) {
+      calculateTotalBudget(customizedPackage); // Only calculate when data is available
+    }
+  }, [customizedPackage, packageDetails]);
+
+  const calculateTotalBudget = (packageData) => {
+    let total = 0;
+    let breakdown = {};
+
+    if (packageDetails) {
+      // Base package budget
+      let baseBudget = parseFloat(packageDetails.baseBudget || 0);
+      breakdown.baseBudget = baseBudget;
+      total += baseBudget;
+
+      // Meal plan budget
+      const mealPrices = {
+        "Vegetarian": 5,
+        "Vegan": 6,
+        "Local Cuisine": 7,
+        "Seafood": 10,
+        "Buffet": 12,
+      };
+      let mealBudget = 0;
+      if (packageData.mealPlan) {
+        mealBudget = mealPrices[packageData.mealPlan] || 0;
+        breakdown.mealPlan = mealBudget;
+        total += mealBudget;
+      }
+
+      // Activity costs
+      const activityPrices = {
+        "Hiking": 5,
+        "Safari": 10,
+        "Cultural Experience": 9,
+        "Wildlife Watching": 12,
+      };
+      let activityBudget = 0;
+      if (packageData.activities) {
+        activityBudget = packageData.activities.reduce((sum, activity) => sum + (activityPrices[activity] || 0), 0);
+        breakdown.activities = activityBudget;
+        total += activityBudget;
+      }
+
+      // Transport budget
+      const transportPrices = {
+        "Private Car": 50,
+        "Train": 30,
+        "Bus": 20,
+        "Plane": 100,
+      };
+      let transportBudget = 0;
+      if (packageData.transport) {
+        transportBudget = transportPrices[packageData.transport] || 0;
+        breakdown.transport = transportBudget;
+        total += transportBudget;
+      }
+
+      // Hotel budget
+      const hotelPrices = {
+        "3-Star": 40,
+        "4-Star": 70,
+        "5-Star": 100,
+      };
+      let hotelBudget = 0;
+      if (packageData.hotels) {
+        hotelBudget = hotelPrices[packageData.hotels] || 0;
+        breakdown.hotels = hotelBudget;
+        total += hotelBudget;
+      }
+
+      // Destination budget
+      const destinationPrices = {
+        "Town A": 15,
+        "Town B": 20,
+        "Attraction 1": 25,
+        "Attraction 2": 30,
+      };
+      let destinationBudget = 0;
+      if (packageData.destinations) {
+        destinationBudget = packageData.destinations.reduce((sum, destination) => sum + (destinationPrices[destination] || 0), 0);
+        breakdown.destinations = destinationBudget;
+        total += destinationBudget;
+      }
+
+      // Set final total and breakdown
+      setTotalBudget(total);
+      setBudgetDetails(breakdown);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-      <Card variant="outlined" style={{ maxWidth: '600px', width: '100%', padding: '20px', background: '#f9f9f9' }}>
+      <Card variant="outlined" style={{ maxWidth: '800px', width: '100%', padding: '20px', background: '#f9f9f9' }}>
         <CardContent>
           <Typography variant="h4" align="center" gutterBottom>
             Customized Tour Budget Report
@@ -48,7 +142,7 @@ const ViewCustomizedPackage = () => {
                   </TableRow>
                   <TableRow>
                     <TableCell><strong>Base Budget</strong></TableCell>
-                    <TableCell>{packageDetails.budget}</TableCell>
+                    <TableCell>${packageDetails.baseBudget}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell><strong>Highlights</strong></TableCell>
@@ -97,10 +191,24 @@ const ViewCustomizedPackage = () => {
             </Typography>
           )}
 
+          {/* Individual Budget Breakdown */}
+          <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+            <Table>
+              <TableBody>
+                {Object.entries(budgetDetails).map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></TableCell>
+                    <TableCell>${value}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
           {/* Total Budget Section */}
           <div style={{ marginTop: '20px', textAlign: 'center' }}>
             <Typography variant="h5" color="primary">
-              Total Budget: {packageDetails ? packageDetails.budget : "Not Calculated"}
+              Total Budget: ${totalBudget}
             </Typography>
           </div>
 
