@@ -186,7 +186,7 @@ const CustomizeTour = ({ tour = {} }) => {
         onClick={handleConfirm}
         style={{ marginTop: '20px' }}
       >
-        Confirm Customization
+        Book Package
       </Button>
     </div>
   );

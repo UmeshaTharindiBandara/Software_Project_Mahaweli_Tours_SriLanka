@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Card, CardContent, Divider, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Typography, Card, CardContent, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import PackageDetails from './PackageDetails'; // Import PackageDetails component
 
 const ViewCustomizedPackage = () => {
   const [customizedPackage, setCustomizedPackage] = useState(null);
@@ -14,7 +13,7 @@ const ViewCustomizedPackage = () => {
       setCustomizedPackage(storedPackage);
     }
 
-    // Simulating fetching package details (This should ideally come from an API or state)
+    // Simulating fetching package details (Ideally, fetch from API)
     const fetchedPackageDetails = {
       name: "Galle Fort",
       budget: "$150",
@@ -26,83 +25,93 @@ const ViewCustomizedPackage = () => {
   }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Typography variant="h4" gutterBottom>
-        Your Customized Tour Package
-      </Typography>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+      <Card variant="outlined" style={{ maxWidth: '600px', width: '100%', padding: '20px', background: '#f9f9f9' }}>
+        <CardContent>
+          <Typography variant="h4" align="center" gutterBottom>
+            Customized Tour Budget Report
+          </Typography>
+          <Divider style={{ marginBottom: '20px' }} />
 
-      {/* Package Details Section */}
-      {packageDetails && (
-        <Card variant="outlined" style={{ marginBottom: '20px' }}>
-          <CardContent>
-            <Typography variant="h5">{packageDetails.name}</Typography>
-            <Typography variant="h6">Budget: {packageDetails.budget}</Typography>
-            <Typography variant="h6">Duration: {packageDetails.duration}</Typography>
+          {/* Package Overview */}
+          {packageDetails && (
+            <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell><strong>Destination</strong></TableCell>
+                    <TableCell>{packageDetails.name}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Duration</strong></TableCell>
+                    <TableCell>{packageDetails.duration}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Base Budget</strong></TableCell>
+                    <TableCell>{packageDetails.budget}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Highlights</strong></TableCell>
+                    <TableCell>{packageDetails.highlights.join(", ")}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
 
-            <Divider style={{ margin: '10px 0' }} />
+          {/* Customized Selections */}
+          {customizedPackage ? (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell><strong>Meal Plan</strong></TableCell>
+                    <TableCell>{customizedPackage.mealPlan || "Not Selected"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Activities</strong></TableCell>
+                    <TableCell>{customizedPackage.activities.length > 0 ? customizedPackage.activities.join(", ") : "No activities selected"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Transportation</strong></TableCell>
+                    <TableCell>{customizedPackage.transport || "Not Selected"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Hotel</strong></TableCell>
+                    <TableCell>{customizedPackage.hotels || "Not Selected"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Guide</strong></TableCell>
+                    <TableCell>{customizedPackage.guides || "Not Selected"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell><strong>Special Requests</strong></TableCell>
+                    <TableCell>{customizedPackage.specialRequests || "None"}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography align="center" color="textSecondary">
+              No package selected
+            </Typography>
+          )}
 
-            <Typography variant="h6">Highlights:</Typography>
-            <List>
-              {packageDetails.highlights.map((highlight, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={highlight} />
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      )}
+          {/* Total Budget Section */}
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <Typography variant="h5" color="primary">
+              Total Budget: {packageDetails ? packageDetails.budget : "Not Calculated"}
+            </Typography>
+          </div>
 
-      {/* Customized Selections Section */}
-      {customizedPackage ? (
-        <Card variant="outlined">
-          <CardContent>
-            <Typography variant="h6">Meal Plan:</Typography>
-            <Typography>{customizedPackage.mealPlan || "Not Selected"}</Typography>
-
-            <Divider style={{ margin: '10px 0' }} />
-
-            <Typography variant="h6">Activities:</Typography>
-            <List>
-              {customizedPackage.activities.length > 0 ? (
-                customizedPackage.activities.map((activity, index) => (
-                  <ListItem key={index}>
-                    <ListItemText primary={activity} />
-                  </ListItem>
-                ))
-              ) : (
-                <Typography>No activities selected</Typography>
-              )}
-            </List>
-
-            <Divider style={{ margin: '10px 0' }} />
-
-            <Typography variant="h6">Transportation:</Typography>
-            <Typography>{customizedPackage.transport || "Not Selected"}</Typography>
-
-            <Divider style={{ margin: '10px 0' }} />
-
-            <Typography variant="h6">Hotel:</Typography>
-            <Typography>{customizedPackage.hotels || "Not Selected"}</Typography>
-
-            <Divider style={{ margin: '10px 0' }} />
-
-            <Typography variant="h6">Guide:</Typography>
-            <Typography>{customizedPackage.guides || "Not Selected"}</Typography>
-
-            <Divider style={{ margin: '10px 0' }} />
-
-            <Typography variant="h6">Special Requests:</Typography>
-            <Typography>{customizedPackage.specialRequests || "None"}</Typography>
-
+          {/* Back Button */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <Button variant="contained" color="primary" onClick={() => navigate('/')}>
               Back to Home
             </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Typography>No package selected</Typography>
-      )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
