@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Card, CardContent, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ViewCustomizedPackage = () => {
   const [customizedPackage, setCustomizedPackage] = useState(null);
@@ -118,6 +119,28 @@ const ViewCustomizedPackage = () => {
     }
   };
 
+  // pay
+
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/checkout", {
+        totalBudget, // Send total budget
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.data.url) {
+        window.location.href = response.data.url; // Redirect to Stripe checkout
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+    }
+  };
+  
+  
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
       <Card variant="outlined" style={{ maxWidth: '800px', width: '100%', padding: '20px', background: '#f9f9f9' }}>
@@ -214,9 +237,10 @@ const ViewCustomizedPackage = () => {
 
           {/* Back Button */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-            <Button variant="contained" color="primary" onClick={() => navigate('/')}>
-              Back to Home
-            </Button>
+          <Button variant="contained" color="primary" onClick={handlePayment}>
+  Proceed to Payment
+</Button>
+
           </div>
         </CardContent>
       </Card>

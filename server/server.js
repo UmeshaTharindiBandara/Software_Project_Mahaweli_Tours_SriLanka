@@ -16,6 +16,10 @@ import blogRoutes from './models/BlogPost.js';
 
 import newuserModel from "./models/user.js";
 
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+
 // Load environment variables
 config();
 
@@ -34,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 app.use("/api/areas", areaRoutes);
 app.use('/api/blogs', blogRoutes);
+
 
 /** MongoDB Connection */
 mongoose
@@ -350,6 +355,48 @@ app.get('/api/chat', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Payments
+app.post("/checkout", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  console.log("Received totalBudget:", req.body);
+
+  try {
+    const { totalBudget } = req.body; // Get total budget from request
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Customized Tour Package",
+            },
+            unit_amount: Math.round(totalBudget * 100), // Convert dollars to cents
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `http://localhost:3000/success.html`,
+      cancel_url: `http://localhost:3000/cancel.html`,
+    });
+
+    res.json({ url: session.url });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+
 
 // Socket.io Setup
 io.on('connection', (socket) => {
