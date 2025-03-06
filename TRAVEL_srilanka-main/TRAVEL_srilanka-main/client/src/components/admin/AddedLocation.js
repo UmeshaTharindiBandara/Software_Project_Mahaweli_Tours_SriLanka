@@ -4,8 +4,17 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Accordion, AccordionSummary, AccordionDetails, Button, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Grid,
+  Box,
+  Container,
+  Divider,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./AddedLocations.css";
 
@@ -21,6 +30,7 @@ const Added = () => {
   }, []);
 
   const handleEditArea = (areaId) => {
+    // Navigate to the Edit Area page
     navigate(`/edit-area/${areaId}`);
   };
 
@@ -37,7 +47,7 @@ const Added = () => {
         axios
           .delete(`http://localhost:5000/api/areas/${id}`)
           .then(() => {
-            setAreas(areas.filter((area) => area._id !== id));
+            setAreas((prev) => prev.filter((area) => area._id !== id));
             Swal.fire("Deleted!", "The area has been deleted.", "success");
           })
           .catch((err) => {
@@ -53,7 +63,7 @@ const Added = () => {
   };
 
   return (
-    <div className="added-container">
+    <Box className="added-container">
       <Button
         variant="outlined"
         onClick={handleBack}
@@ -63,57 +73,70 @@ const Added = () => {
         Back to Dashboard
       </Button>
 
-      <div className="areas-container">
-        <h1 className="page-title">Available Areas</h1>
-        {areas.map((area, index) => (
-          <Accordion key={index} className="area-accordion">
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">{area.area}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <div className="locations-container">
-                <Typography variant="h6">Locations in {area.area}</Typography>
-                <div className="locations">
-                  {area.locations.map((location, idx) => (
-                    <div key={idx} className="location-item">
-                      <Typography variant="body1" className="location-name">
-                        {location.name}
-                      </Typography>
-                      <img
-                        src={location.image}
-                        alt={location.name}
-                        className="location-image"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
+      <Container className="areas-container">
+        <Typography variant="h3" className="page-title">
+          Available Areas
+        </Typography>
+        <br /><br />
+        <Grid container spacing={4} justifyContent="center">
+          {areas.map((area) => (
+            <Grid item xs={12} sm={6} md={4} key={area._id}>
+              <Card className="area-card">
+                <CardContent className="area-content">
+                  <Typography variant="h5" color="primary" className="area-name">
+                    {area.area}
+                  </Typography>
 
-              <div className="area-actions">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditArea(area._id)}
-                  className="area-action-button"
-                >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit Area
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleDeleteArea(area._id)}
-                  className="area-action-button"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete Area
-                </Button>
-              </div>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </div>
-    </div>
+                  <Divider className="divider" />
+
+                  <Box className="locations-container">
+                    <Typography variant="h6" className="locations-title">
+                      Locations in {area.area}
+                    </Typography>
+                    <Box className="location-scroll">
+                      {area.locations.map((location, idx) => (
+                        <Box className="location-item" key={idx}>
+                          <CardMedia
+                            component="img"
+                            image={location.image}
+                            alt={location.name}
+                            className="location-image"
+                          />
+                          <Typography variant="body1" className="location-name">
+                            {location.name}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </CardContent>
+
+                <Box className="area-actions">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditArea(area._id)}
+                    className="area-action-button"
+                    startIcon={<FontAwesomeIcon icon={faEdit} />}
+                  >
+                    Edit Area
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleDeleteArea(area._id)}
+                    className="area-action-button"
+                    startIcon={<FontAwesomeIcon icon={faTrash} />}
+                  >
+                    Delete Area
+                  </Button>
+                </Box>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

@@ -53,7 +53,7 @@ const AddNew = () => {
     try {
       await axios.post("http://localhost:5000/api/areas", { area, locations });
       Swal.fire("Success!", "The new area has been added!", "success");
-      navigate("/added");
+      navigate("/addedlocation");
     } catch (error) {
       Swal.fire({
         icon: "error",

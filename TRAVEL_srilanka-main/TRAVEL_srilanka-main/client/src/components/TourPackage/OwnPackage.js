@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function TourPackage() {
-  const [customizeMode, setCustomizeMode] = useState(false);
+  const [customizeMode] = useState(false);
   const navigate = useNavigate();
 
   const handleCustomizeClick = () => {

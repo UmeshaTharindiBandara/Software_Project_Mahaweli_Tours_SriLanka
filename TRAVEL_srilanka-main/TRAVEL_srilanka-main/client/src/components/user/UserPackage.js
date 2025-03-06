@@ -50,7 +50,7 @@ const UserPackage = () => {
             {/* Area Selection */}
             <div className="area-selection">
                 <Typography variant="h5" className="section-title">
-                    <MdOutlineLocationOn className="icon" /> Select an Area to Explore
+                    <MdOutlineLocationOn className="icon" /> <b>Select an Area to Explore</b>
                 </Typography>
                 <br/>
                 <motion.div
@@ -61,15 +61,17 @@ const UserPackage = () => {
                 >
                     {areas.map((area, index) => (
                         <Button
-                            key={index}
-                            variant="contained"
-                            onClick={() => handleAreaSelect(area)}
-                            className={`area-button ${
-                                selectedArea === area ? "area-button-selected" : ""
-                            }`}
-                        >
-                            {area.area}
-                        </Button>
+                        key={index}
+                        variant="contained"
+                        onClick={() => handleAreaSelect(area)}
+                        className={`area-button ${selectedArea === area ? "area-button-selected" : ""}`}
+                    >
+                        {/* Adding icon and name to the button */}
+                        <MdOutlineLocationOn className="icon" />
+                        <span className="area-name">{area.area}</span>
+                    </Button>
+                    
+                    
                     ))}
                 </motion.div>
             </div>
@@ -138,7 +140,8 @@ const UserPackage = () => {
                         onClick={handleSubmit}
                         className="submit-button"
                     >
-                        Confirm Your Package
+                        Further customize my own tour 
+                        
                     </Button>
                     
                 </motion.div>

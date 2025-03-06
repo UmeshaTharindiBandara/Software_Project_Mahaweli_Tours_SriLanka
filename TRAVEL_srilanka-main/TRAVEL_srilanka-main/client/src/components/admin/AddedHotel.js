@@ -13,6 +13,8 @@ import {
   CardContent,
   Typography,
   Grid,
+  Box,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -48,7 +50,6 @@ const HotelList = () => {
   };
 
   const handleEditHotel = (hotelId) => {
-    console.log("Navigating to edit page:", `/edit-hotel/${hotelId}`); // Debugging log
     navigate(`/edit-hotel/${hotelId}`);
   };
 
@@ -86,7 +87,6 @@ const HotelList = () => {
         onClick={handleBack}
         startIcon={<ArrowBackIcon />}
         className="back-to-dashboard"
-        
       >
         Back to Dashboard
       </Button>
@@ -108,9 +108,9 @@ const HotelList = () => {
             {hotelsByArea[area._id] && hotelsByArea[area._id].length > 0 ? (
               <div className="hotels-wrapper">
                 <h4 className="hotel-section-title">Hotels in {area.area}</h4>
-                <Grid container spacing={2}>
+                <Grid container spacing={3}>
                   {hotelsByArea[area._id].map((hotel) => (
-                    <Grid item xs={12} sm={6} key={hotel._id}>
+                    <Grid item xs={12} sm={6} md={4} key={hotel._id}>
                       <Card className="hotel-card">
                         <CardContent>
                           <Typography variant="h6" className="hotel-name">
@@ -119,33 +119,41 @@ const HotelList = () => {
                           <Typography variant="body2" color="textSecondary">
                             Price: ${hotel.price} | Rating: ⭐{hotel.rating}
                           </Typography>
-                          <img
-                            src={hotel.image}
-                            alt={hotel.name}
-                            className="hotel-thumbnail"
-                          />
+
+                          {/* Image Gallery Section */}
+                          <Box className="hotel-gallery">
+                            <img
+                              src={hotel.image}
+                              alt={hotel.name}
+                              className="hotel-thumbnail"
+                            />
+                          </Box>
                         </CardContent>
 
                         <div className="hotel-card-actions">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleEditHotel(hotel._id)}
-                            className="hotel-action-btn"
-                          >
-                            <FontAwesomeIcon icon={faEdit} />
-                            Edit
-                          </Button>
+                          <Tooltip title="Edit Hotel" placement="top">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleEditHotel(hotel._id)}
+                              className="hotel-action-btn"
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                              Edit
+                            </Button>
+                          </Tooltip>
 
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleDeleteHotel(hotel._id, area._id)}
-                            className="hotel-action-btn"
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                            Delete
-                          </Button>
+                          <Tooltip title="Delete Hotel" placement="top">
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => handleDeleteHotel(hotel._id, area._id)}
+                              className="hotel-action-btn"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                              Delete
+                            </Button>
+                          </Tooltip>
                         </div>
                       </Card>
                     </Grid>

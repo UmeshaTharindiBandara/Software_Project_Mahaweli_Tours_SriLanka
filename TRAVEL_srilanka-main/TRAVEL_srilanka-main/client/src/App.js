@@ -29,6 +29,7 @@ import SelectedPackage from './components/TourPackage/SelectedPackage';
 
 import Signup from "./components/registration/Signup";
 import Login from "./components/registration/Login";
+import EditArea from './components/admin/EditArea';
 
 function App() {
   return (
@@ -56,6 +57,8 @@ function App() {
           <Route path="/addhotel" element={<AddHotel/>} />
           <Route path="/addedhotel" element={<AddedHotel/>} />
           <Route path="/edit-hotel/:id" element={<EditHotel />} />
+          <Route path="/edit-area/:id" element={<EditArea />} />
+
 
 
           <Route path="/chat" element={<Chat />} />

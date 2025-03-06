@@ -79,28 +79,36 @@ const AddNewEdit = () => {
 
   const handleUpdateArea = async (e) => {
     e.preventDefault();  // Prevent form reload
-    console.log("Updating area...");
 
+    // Validation
     if (!area.trim() || locations.length === 0) {
-        Swal.fire("Error", "Area name and at least one location are required!", "warning");
-        return;
+      Swal.fire("Error", "Area name and at least one location are required!", "warning");
+      return;
     }
 
+    // Log the data to confirm it's correct
     console.log("Sending Data:", { area, locations });
 
     try {
-        const response = await axios.put(`http://localhost:5000/api/areas/${id}`, { area, locations });
-        console.log("Server Response:", response.data);
+      // Make the API call to update the area
+      const response = await axios.put(`http://localhost:5000/api/areas/${id}`, { area, locations });
 
-        Swal.fire("Success!", "Area updated successfully!", "success");
-        navigate("/addedlocation");
+      // Log the server response
+      console.log("Server Response:", response.data);
+
+      // Show success message
+      Swal.fire("Success!", "Area updated successfully!", "success");
+      navigate("/addedlocation");
     } catch (error) {
-        console.error("Error Response:", error.response);
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error.response?.data?.message || "An error occurred. Please try again.",
-        });
+      // Log error response for debugging
+      console.error("Error Response:", error.response);
+
+      // Show error message
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.response?.data?.message || "An error occurred. Please try again.",
+      });
     }
   };
 
