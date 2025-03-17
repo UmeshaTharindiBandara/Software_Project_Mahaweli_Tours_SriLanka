@@ -1,44 +1,55 @@
-import express from 'express';
-import morgan from 'morgan';
-import cors from 'cors';
-import { config } from 'dotenv';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
-import { Server } from 'socket.io';
-import http from 'http';
+import { config } from "dotenv";
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import mongoose from "mongoose";
+import nodemailer from "nodemailer";
+import { Server } from "socket.io";
+import http from "http";
 
-import profileRoutes from './routes/profileRoutes.js';
+import profileRoutes from "./routes/profileRoutes.js";
 import areaRoutes from "./routes/areaRoutes.js";
-import ChatMessage from './models/ChatMessage.js';
-import blogRoutes from './models/BlogPost.js';
+import ChatMessage from "./models/ChatMessage.js";
+import blogRoutes from "./models/BlogPost.js";
 
 import newuserModel from "./models/user.js";
 
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
-
+//const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // ✅ Correct (no "new")
 // Load environment variables
 config();
 
 const app = express();
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16", // Required for newer SDK versions
+});
+
+// Debugging: Confirm key is loaded
+console.log(
+  "[STRIPE] Key Status:",
+  process.env.STRIPE_SECRET_KEY ? "✅ Loaded" : "❌ Missing"
+);
 
 /** App middlewares */
-app.use(morgan('tiny'));
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}));
+app.use(morgan("tiny"));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["POST", "GET", "PUT", "DELETE"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 app.use("/api/areas", areaRoutes);
-app.use('/api/blogs', blogRoutes);
-
+app.use("/api/blogs", blogRoutes);
 
 /** MongoDB Connection */
 mongoose
@@ -51,7 +62,7 @@ mongoose
 
 /** Nodemailer setup */
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: "Gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -62,14 +73,14 @@ const transporter = nodemailer.createTransport({
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
 });
 
 /** Home route */
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.json("Server is running");
 });
 
@@ -105,7 +116,7 @@ app.get('/', (req, res) => {
 //     if (!user || !(await bcrypt.compare(password, user.password))) {
 //       return res.status(401).send({ status: "Fail", message: "Invalid credentials" });
 //     }
-  
+
 //     res.send({
 //       status: "Success",
 //       username: user.username,
@@ -239,15 +250,29 @@ const Tour = mongoose.model("Tour", tourSchema);
 
 // Create a new tour package
 app.post("/api/tours", async (req, res) => {
-  const {  name, description, budget, duration, highlights, image } = req.body;
+  const { name, description, budget, duration, highlights, image } = req.body;
 
   // Validate fields
-  if ( !name || !description || budget === undefined || !duration || !highlights || !image) {
+  if (
+    !name ||
+    !description ||
+    budget === undefined ||
+    !duration ||
+    !highlights ||
+    !image
+  ) {
     return res.status(400).json({ message: "Please fill all fields." });
   }
 
   try {
-    const newTour = new Tour({name, description, budget, duration, highlights, image });
+    const newTour = new Tour({
+      name,
+      description,
+      budget,
+      duration,
+      highlights,
+      image,
+    });
     await newTour.save();
     res.status(201).json({ success: true, data: newTour });
   } catch (error) {
@@ -274,7 +299,9 @@ app.get("/api/tours/:id", async (req, res) => {
   try {
     const tour = await Tour.findById(id);
     if (!tour) {
-      return res.status(404).json({ success: false, message: "Tour not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Tour not found." });
     }
     res.status(200).json({ success: true, data: tour });
   } catch (error) {
@@ -289,7 +316,14 @@ app.put("/api/tours/:id", async (req, res) => {
   const { name, description, budget, duration, highlights, image } = req.body;
 
   // Validate fields
-  if (!name || !description || budget === undefined || !duration || !highlights || !image) {
+  if (
+    !name ||
+    !description ||
+    budget === undefined ||
+    !duration ||
+    !highlights ||
+    !image
+  ) {
     return res.status(400).json({ message: "Please fill all fields." });
   }
 
@@ -301,7 +335,9 @@ app.put("/api/tours/:id", async (req, res) => {
     );
 
     if (!updatedTour) {
-      return res.status(404).json({ success: false, message: "Tour not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Tour not found." });
     }
 
     res.status(200).json({ success: true, data: updatedTour });
@@ -319,10 +355,14 @@ app.delete("/api/tours/:id", async (req, res) => {
     const deletedTour = await Tour.findByIdAndDelete(id);
 
     if (!deletedTour) {
-      return res.status(404).json({ success: false, message: "Tour not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Tour not found." });
     }
 
-    res.status(200).json({ success: true, message: "Tour deleted successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "Tour deleted successfully." });
   } catch (error) {
     console.error("Error deleting tour:", error.message);
     res.status(500).json({ success: false, message: "Server error." });
@@ -330,46 +370,36 @@ app.delete("/api/tours/:id", async (req, res) => {
 });
 
 // Chat Message Routes
-app.post('/api/chat', async (req, res) => {
+app.post("/api/chat", async (req, res) => {
   try {
     const { user, message } = req.body;
     if (!user || !message) {
-      return res.status(400).json({ error: 'User and message are required' });
+      return res.status(400).json({ error: "User and message are required" });
     }
 
     const chatMessage = new ChatMessage({ user, message });
     await chatMessage.save();
     res.status(201).json(chatMessage);
   } catch (error) {
-    console.error('Error saving chat message:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error saving chat message:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.get('/api/chat', async (req, res) => {
+app.get("/api/chat", async (req, res) => {
   try {
     const messages = await ChatMessage.find().sort({ timestamp: 1 });
     res.json(messages);
   } catch (error) {
-    console.error('Error fetching chat messages:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching chat messages:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // Payments
-app.post("/checkout", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  console.log("Received totalBudget:", req.body);
-
+app.post("/api/checkout", async (req, res) => {
   try {
-    const { totalBudget } = req.body; // Get total budget from request
-
+    const { totalBudget } = req.body;
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -377,65 +407,58 @@ app.post("/checkout", async (req, res) => {
         {
           price_data: {
             currency: "usd",
-            product_data: {
-              name: "Customized Tour Package",
-            },
-            unit_amount: Math.round(totalBudget * 100), // Convert dollars to cents
+            product_data: { name: "Customized Tour Package" },
+            unit_amount: Math.round(totalBudget * 100),
           },
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:3000/success.html`,
-      cancel_url: `http://localhost:3000/cancel.html`,
+      success_url: `http://localhost:3000/success`,
+      cancel_url: `http://localhost:3000/cancel`,
     });
 
-    res.json({ url: session.url });
+    res.json({ id: session.id });
   } catch (e) {
+    console.error("Stripe Error:", e);
     res.status(500).json({ error: e.message });
   }
 });
 
-
-
-
 // Socket.io Setup
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
-  socket.on('chat message', async (data) => {
+  socket.on("chat message", async (data) => {
     try {
       const chatMessage = new ChatMessage(data);
       await chatMessage.save();
 
-      io.emit('chat message', chatMessage);
-      socket.emit('message status', 'Message Sent Successfully');
+      io.emit("chat message", chatMessage);
+      socket.emit("message status", "Message Sent Successfully");
     } catch (error) {
-      console.error('Error saving chat message:', error);
+      console.error("Error saving chat message:", error);
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
   });
 });
 
 // Start the server
 const PORT = 5000;
 
-mongoose
-  .connect("mongodb://localhost:27017/tourDB", { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Connected to MongoDB.");
-    app.listen(PORT, () => console.log(`Server is running on port ${PORT}.`));
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-  });
+// mongoose
+//   .connect("mongodb://localhost:27017/tourDB", { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => {
+//     console.log("Connected to MongoDB.");
+//     app.listen(PORT, () => console.log(`Server is running on port ${PORT}.`));
+//   })
+//   .catch((err) => {
+//     console.error("MongoDB connection error:", err.message);
+//   });
 
-
-app.use('/api', profileRoutes);
-
-
+app.use("/api", profileRoutes);
 
 /** Start the server */
 const port = process.env.PORT || 3000;

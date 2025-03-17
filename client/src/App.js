@@ -1,5 +1,10 @@
-import './styles/App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import "./styles/App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 
 import Header from "./components/common/header/Header";
 import Footer from "./components/common/footer/Footer";
@@ -8,18 +13,19 @@ import About from "./components/about/About";
 import Blog from "./components/blog/Blog";
 import Contact from "./components/contact/Contact";
 import Home from "./components/home/Home";
-import TourPackage from './components/TourPackage/TourPackage';
-import CustomizeTour from './components/TourPackage/CustomizeTour';
-import SelectedPackage from './components/TourPackage/SelectedPackage';
+import TourPackage from "./components/TourPackage/TourPackage";
+import CustomizeTour from "./components/TourPackage/CustomizeTour";
+import SelectedPackage from "./components/TourPackage/SelectedPackage";
 import ViewCustomizedPackage from "./components/TourPackage/ViewCustomizedPackage";
-
+import Success from "./components/TourPackage/Success";
+import Cancel from "./components/TourPackage/Cancel";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AddPackages from "./components/admin/AddPackages";
 import EditPackages from "./components/admin/EditPackages";
-import AddNew from './components/admin/AddNew';
-import AddNewEdit from './components/admin/AddNewEdit';
-import AddedPackage from './components/admin/AddedPackage';
-import AddedLocation from './components/admin/AddedLocation';
+import AddNew from "./components/admin/AddNew";
+import AddNewEdit from "./components/admin/AddNewEdit";
+import AddedPackage from "./components/admin/AddedPackage";
+import AddedLocation from "./components/admin/AddedLocation";
 
 import ProfilePage from "./components/user/Profile";
 import UserPacakge from "./components/user/UserPackage";
@@ -37,7 +43,9 @@ const AppContent = () => {
 
   return (
     <>
-      {!hideHeaderPages.includes(location.pathname) && !isTourPage && <Header />}
+      {!hideHeaderPages.includes(location.pathname) && !isTourPage && (
+        <Header />
+      )}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -45,11 +53,11 @@ const AppContent = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/tour" element={<TourPackage />} />
         <Route path="/tour/:id" element={<CustomizeTour />} />
-        
+
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/add" element={<AddPackages />} />
         <Route path="/edit/:id" element={<EditPackages />} />
-        
+
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/userpackage" element={<UserPacakge />} />
         <Route path="/addnew" element={<AddNew />} />
@@ -62,7 +70,12 @@ const AppContent = () => {
 
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/view-customized-package" element={<ViewCustomizedPackage />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
+        <Route
+          path="/view-customized-package"
+          element={<ViewCustomizedPackage />}
+        />
       </Routes>
       <Footer />
     </>

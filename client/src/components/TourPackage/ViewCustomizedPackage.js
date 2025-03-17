@@ -1,7 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Typography, Card, CardContent, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import {
+  Typography,
+  Card,
+  CardContent,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Add this at the top of your component
+// Use your actual key
 
 const ViewCustomizedPackage = () => {
   const [customizedPackage, setCustomizedPackage] = useState(null);
@@ -11,7 +27,7 @@ const ViewCustomizedPackage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedPackage = JSON.parse(localStorage.getItem('customizedPackage'));
+    const storedPackage = JSON.parse(localStorage.getItem("customizedPackage"));
     if (storedPackage) {
       setCustomizedPackage(storedPackage);
     }
@@ -45,11 +61,11 @@ const ViewCustomizedPackage = () => {
 
       // Meal plan budget
       const mealPrices = {
-        "Vegetarian": 5,
-        "Vegan": 6,
+        Vegetarian: 5,
+        Vegan: 6,
         "Local Cuisine": 7,
-        "Seafood": 10,
-        "Buffet": 12,
+        Seafood: 10,
+        Buffet: 12,
       };
       let mealBudget = 0;
       if (packageData.mealPlan) {
@@ -60,14 +76,17 @@ const ViewCustomizedPackage = () => {
 
       // Activity costs
       const activityPrices = {
-        "Hiking": 5,
-        "Safari": 10,
+        Hiking: 5,
+        Safari: 10,
         "Cultural Experience": 9,
         "Wildlife Watching": 12,
       };
       let activityBudget = 0;
       if (packageData.activities) {
-        activityBudget = packageData.activities.reduce((sum, activity) => sum + (activityPrices[activity] || 0), 0);
+        activityBudget = packageData.activities.reduce(
+          (sum, activity) => sum + (activityPrices[activity] || 0),
+          0
+        );
         breakdown.activities = activityBudget;
         total += activityBudget;
       }
@@ -75,9 +94,9 @@ const ViewCustomizedPackage = () => {
       // Transport budget
       const transportPrices = {
         "Private Car": 50,
-        "Train": 30,
-        "Bus": 20,
-        "Plane": 100,
+        Train: 30,
+        Bus: 20,
+        Plane: 100,
       };
       let transportBudget = 0;
       if (packageData.transport) {
@@ -108,7 +127,10 @@ const ViewCustomizedPackage = () => {
       };
       let destinationBudget = 0;
       if (packageData.destinations) {
-        destinationBudget = packageData.destinations.reduce((sum, destination) => sum + (destinationPrices[destination] || 0), 0);
+        destinationBudget = packageData.destinations.reduce(
+          (sum, destination) => sum + (destinationPrices[destination] || 0),
+          0
+        );
         breakdown.destinations = destinationBudget;
         total += destinationBudget;
       }
@@ -120,56 +142,96 @@ const ViewCustomizedPackage = () => {
   };
 
   // pay
+  // const handlePayment = async () => {
+  //   const stripePromise = loadStripe(
+  //     "pk_test_51Qdni3AQTkEktI7BiiQZbG3IGUL7nU4zlU9cj0O5iv3PARf6GbmNAyVXxh63hFeoUmIKTWzgMk1f2oYKSnJDooSU00usewESDx"
+  //   );
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5000/api/checkout",
+  //       { totalBudget },
+  //       { headers: { "Content-Type": "application/json" } }
+  //     );
+
+  //     const stripe = await stripePromise;
+  //     const { error } = await stripe.redirectToCheckout({
+  //       sessionId: response.data.id,
+  //     });
+
+  //     if (error) throw error;
+  //   } catch (error) {
+  //     console.error("Payment Error:", error);
+  //   }
+  // };
+
+  const stripePromise = loadStripe(
+    "pk_test_51Qdni3AQTkEktI7BiiQZbG3IGUL7nU4zlU9cj0O5iv3PARf6GbmNAyVXxh63hFeoUmIKTWzgMk1f2oYKSnJDooSU00usewESDx"
+  );
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/checkout", {
-        totalBudget, // Send total budget
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await axios.post("http://localhost:5000/api/checkout", {
+        totalBudget,
       });
-  
-      if (response.data.url) {
-        window.location.href = response.data.url; // Redirect to Stripe checkout
-      }
+
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: response.data.id, // Use session ID from backend
+      });
+
+      if (error) throw error;
     } catch (error) {
       console.error("Payment Error:", error);
     }
   };
-  
-  
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-      <Card variant="outlined" style={{ maxWidth: '800px', width: '100%', padding: '20px', background: '#f9f9f9' }}>
+    <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+      <Card
+        variant="outlined"
+        style={{
+          maxWidth: "800px",
+          width: "100%",
+          padding: "20px",
+          background: "#f9f9f9",
+        }}
+      >
         <CardContent>
           <Typography variant="h4" align="center" gutterBottom>
             Customized Tour Budget Report
           </Typography>
-          <Divider style={{ marginBottom: '20px' }} />
+          <Divider style={{ marginBottom: "20px" }} />
 
           {/* Package Overview */}
           {packageDetails && (
-            <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+            <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell><strong>Destination</strong></TableCell>
+                    <TableCell>
+                      <strong>Destination</strong>
+                    </TableCell>
                     <TableCell>{packageDetails.name}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Duration</strong></TableCell>
+                    <TableCell>
+                      <strong>Duration</strong>
+                    </TableCell>
                     <TableCell>{packageDetails.duration}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Base Budget</strong></TableCell>
+                    <TableCell>
+                      <strong>Base Budget</strong>
+                    </TableCell>
                     <TableCell>${packageDetails.baseBudget}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Highlights</strong></TableCell>
-                    <TableCell>{packageDetails.highlights.join(", ")}</TableCell>
+                    <TableCell>
+                      <strong>Highlights</strong>
+                    </TableCell>
+                    <TableCell>
+                      {packageDetails.highlights.join(", ")}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -182,28 +244,54 @@ const ViewCustomizedPackage = () => {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell><strong>Meal Plan</strong></TableCell>
-                    <TableCell>{customizedPackage.mealPlan || "Not Selected"}</TableCell>
+                    <TableCell>
+                      <strong>Meal Plan</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.mealPlan || "Not Selected"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Activities</strong></TableCell>
-                    <TableCell>{customizedPackage.activities.length > 0 ? customizedPackage.activities.join(", ") : "No activities selected"}</TableCell>
+                    <TableCell>
+                      <strong>Activities</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.activities.length > 0
+                        ? customizedPackage.activities.join(", ")
+                        : "No activities selected"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Transportation</strong></TableCell>
-                    <TableCell>{customizedPackage.transport || "Not Selected"}</TableCell>
+                    <TableCell>
+                      <strong>Transportation</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.transport || "Not Selected"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Hotel</strong></TableCell>
-                    <TableCell>{customizedPackage.hotels || "Not Selected"}</TableCell>
+                    <TableCell>
+                      <strong>Hotel</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.hotels || "Not Selected"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Guide</strong></TableCell>
-                    <TableCell>{customizedPackage.guides || "Not Selected"}</TableCell>
+                    <TableCell>
+                      <strong>Guide</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.guides || "Not Selected"}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell><strong>Special Requests</strong></TableCell>
-                    <TableCell>{customizedPackage.specialRequests || "None"}</TableCell>
+                    <TableCell>
+                      <strong>Special Requests</strong>
+                    </TableCell>
+                    <TableCell>
+                      {customizedPackage.specialRequests || "None"}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -215,12 +303,16 @@ const ViewCustomizedPackage = () => {
           )}
 
           {/* Individual Budget Breakdown */}
-          <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+          <TableContainer component={Paper} style={{ marginTop: "20px" }}>
             <Table>
               <TableBody>
                 {Object.entries(budgetDetails).map(([key, value]) => (
                   <TableRow key={key}>
-                    <TableCell><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></TableCell>
+                    <TableCell>
+                      <strong>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </strong>
+                    </TableCell>
                     <TableCell>${value}</TableCell>
                   </TableRow>
                 ))}
@@ -229,18 +321,23 @@ const ViewCustomizedPackage = () => {
           </TableContainer>
 
           {/* Total Budget Section */}
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
             <Typography variant="h5" color="primary">
               Total Budget: ${totalBudget}
             </Typography>
           </div>
 
           {/* Back Button */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <Button variant="contained" color="primary" onClick={handlePayment}>
-  Proceed to Payment
-</Button>
-
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button variant="contained" color="primary" onClick={handlePayment}>
+              Proceed to Payment
+            </Button>
           </div>
         </CardContent>
       </Card>
