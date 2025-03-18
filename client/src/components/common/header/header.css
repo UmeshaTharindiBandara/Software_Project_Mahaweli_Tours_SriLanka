@@ -13,7 +13,23 @@
     margin-left: 10px;
   }
 
-
+  .logo {
+    display: flex; /* Flexbox for logo items */
+    align-items: center; /* Center logo items vertically */
+    margin-left: 10px;
+  }
+  
+  .logo h1 {
+    margin: 0; /* Remove default margin */
+    font-size: 2rem; /* Font size for the title */
+    color: var(--textColor); /* You can set a CSS variable or specific color */
+  }
+  
+  .logo span {
+    font-size: 1.2rem; /* Font size for the subtitle */
+    color: var(--greyText); /* You can set a CSS variable or specific color */
+    margin-left: 10px; /* Space between title and subtitle */
+  }
   
 
   /*--------header------------*/

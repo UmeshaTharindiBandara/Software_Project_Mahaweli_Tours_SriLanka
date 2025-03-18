@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate,Link } from "react-router-dom";
 //import Head from "./Head";
 import "./header.css";
-import Head from  "./Head";
+
+import { MdTravelExplore } from "react-icons/md"  // Already used in Navbar
+
 
 
 const Header = () => {
@@ -50,10 +52,14 @@ const Header = () => {
 
   return (
     <>
-      <Head/>
+     
       <header>
         <nav className="flexSB">
+           <div className='logo'>
+                      <h1><MdTravelExplore className='icon'/>  Mahaweli Tours</h1>
+                    </div>
           <ul className={click ? "mobile-nav" : "flexSB"} onClick={() => setClick(false)}>
+
             <li><Link to="/">Home</Link></li>
             <li><Link to="/about">About</Link></li>
             <li><Link to="/blog">Blog</Link></li>
